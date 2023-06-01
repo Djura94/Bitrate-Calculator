@@ -47,6 +47,11 @@ namespace Bitrate_Calculator
 
                         rtb_Bitrate.Text = "Tx: " + txResult.ToString() + " MB/s\n"
                                          + "Rx: " + rxResult.ToString() + " MB/s\n"; //Result is provided in the appropriate textBox 
+
+                        if (rtb_Bitrate.Text != "")
+                        {
+                            BitrateOutputWriter(txResult.ToString(), rxResult.ToString()); //Creates a output json file
+                        }
                     }
                 }
             }
@@ -75,6 +80,17 @@ namespace Bitrate_Calculator
         {
             long pollingRate = 2; //2 represents the polling rate of 2Hz
             return (number * pollingRate) / 1000000; //returning the bitrate in MB/s form
+        }
+
+        private void BitrateOutputWriter(string tx, string rx) //creates a new json file which contains the Tx and Rx speeds
+        {
+            JsonOutput result = new JsonOutput();
+            result.TxResult = tx + " MB/s";
+            result.RxResult = rx + " MB/s";
+
+            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Output.json");
+            string json = JsonConvert.SerializeObject(result, Formatting.Indented);
+            File.WriteAllText(filePath, json);
         }
     }
 }
